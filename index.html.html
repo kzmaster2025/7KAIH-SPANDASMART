@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Guru - 7 Kebiasaan Anak Indonesia Hebat</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (via CDN for single file integration) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        brand: { blue: '#2563EB', green: '#16A34A', orange: '#F59E0B' }
+                    },
+                    borderRadius: { 'xl': '18px' },
+                    boxShadow: { 'soft': '0 4px 20px rgba(0, 0, 0, 0.05)' }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons: Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SheetJS (Excel) -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* Base Styles & Custom Scrollbar */
+        body { font-family: 'Poppins', sans-serif; overflow: hidden; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .dark #loading-screen { background: #111827; }
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #2563EB;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Watermark */
+        .watermark-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; overflow: hidden;
+            display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;
+            opacity: 0.03; /* Very transparent */
+        }
+        .dark .watermark-container { opacity: 0.02; }
+        .watermark-text {
+            font-size: 1.5rem; font-weight: bold; color: #000;
+            transform: rotate(-30deg); user-select: none; white-space: pre-line; text-align: center;
+            padding: 50px;
+        }
+        .dark .watermark-text { color: #fff; }
+
+        /* Card Hover Effects */
+        .hover-card { transition: all 0.3s ease; }
+        .hover-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+        /* Sidebar active state */
+        .nav-item.active {
+            background-color: #eff6ff; color: #2563EB; font-weight: 600;
+            border-right: 4px solid #2563EB;
+        }
+        .dark .nav-item.active {
+            background-color: #1e3a8a; color: #60a5fa; border-right-color: #60a5fa;
+        }
+
+        /* Table specific styles for responsiveness */
+        .table-container { overflow-x: auto; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f8fafc; text-align: left; padding: 12px 16px; font-weight: 600; font-size: 0.875rem; color: #475569; }
+        .dark th { background-color: #1f2937; color: #d1d5db; }
+        td { padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 0.875rem; }
+        .dark td { border-bottom-color: #374151; color: #e5e7eb; }
+        tr:hover td { background-color: #f1f5f9; }
+        .dark tr:hover td { background-color: #374151; }
+
+        /* Form Inputs */
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #d1d5db;
+            background-color: #fff; color: #111827; transition: border-color 0.2s;
+        }
+        .dark .form-input {
+            background-color: #374151; border-color: #4b5563; color: #f9fafb;
+        }
+        .form-input:focus { outline: none; border-color: #2563EB; ring: 2px; ring-color: #bfdbfe; }
+        
+        /* Modals */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 100; display: none; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; border-radius: 1.125rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;
+        }
+        .dark .modal-content { background: #1f2937; color: white; }
+
+        /* Print Styles */
+        @media print {
+            body { overflow: visible !important; }
+            #sidebar, #topbar, .no-print { display: none !important; }
+            #main-content { margin: 0; padding: 0; width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+            .watermark-container { opacity: 0.05; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased flex flex-col h-screen">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader mb-4"></div>
+        <h2 class="text-xl font-semibold text-brand-blue dark:text-blue-400">JURNAL GURU</h2>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Memuat aplikasi...</p>
+    </div>
+
+    <!-- Watermark -->
+    <div class="watermark-container" id="watermark">
+        <!-- Generated by JS -->
+    </div>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 shadow-soft flex flex-col h-full transition-all duration-300 z-20 hidden md:flex">
+            <div class="p-6 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
+                <div class="w-10 h-10 rounded-lg bg-brand-blue flex items-center justify-center text-white shrink-0">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-gray-900 dark:text-white">JURNAL GURU</h1>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-400">7 Kebiasaan Anak Hebat</p>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1" id="nav-menu">
+                <!-- Menu items populated by JS -->
+            </nav>
+
+            <div class="p-4 border-t border-gray-100 dark:border-gray-700 text-center">
+                <p class="text-[10px] text-gray-400">© 2026 Info Guru Tenaga Kependidikan</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col w-full">
+            
+            <!-- Topbar -->
+            <header id="topbar" class="h-16 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-between px-4 lg:px-8 z-10 shrink-0">
+                <div class="flex items-center gap-4">
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div class="hidden sm:block">
+                        <h2 id="page-title" class="text-xl font-bold text-gray-800 dark:text-white">Dashboard</h2>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <div class="hidden lg:flex flex-col items-end text-sm">
+                        <span id="header-date" class="font-medium text-brand-blue dark:text-blue-400"></span>
+                        <div class="flex gap-2 text-gray-500 dark:text-gray-400 text-xs">
+                            <span id="header-time" class="font-mono"></span>
+                            <span id="header-tapel">Tapel: 2026/2027</span>
+                        </div>
+                    </div>
+                    
+                    <button id="theme-toggle" class="p-2.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="Toggle Tema">
+                        <i data-lucide="moon" id="theme-icon" class="w-5 h-5"></i>
+                    </button>
+                    
+                    <!-- Teacher Mini Profile -->
+                    <div class="flex items-center gap-2 border-l pl-4 border-gray-200 dark:border-gray-700">
+                        <div class="w-8 h-8 rounded-full bg-brand-green flex items-center justify-center text-white text-sm font-bold">
+                            <span id="teacher-initial">G</span>
+                        </div>
+                        <div class="hidden md:block text-sm">
+                            <p id="teacher-name-display" class="font-semibold text-gray-800 dark:text-gray-200 leading-none">Guru</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Content View -->
+            <main id="main-content" class="flex-1 overflow-y-auto p-4 lg:p-8 relative">
+                <!-- Content injected here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modals-container"></div>
+
+    <script>
+        // --- CONSTANTS & CONFIGURATION ---
+        const HABITS = [
+            { id: 'h1', name: 'Bangun Pagi', icon: '☀️' },
+            { id: 'h2', name: 'Beribadah', icon: '🕌' },
+            { id: 'h3', name: 'Berolahraga', icon: '🏃' },
+            { id: 'h4', name: 'Makan Sehat', icon: '🥗' },
+            { id: 'h5', name: 'Gemar Belajar', icon: '📚' },
+            { id: 'h6', name: 'Bermasyarakat', icon: '🤝' },
+            { id: 'h7', name: 'Tidur Cepat', icon: '🌙' }
+        ];
+
+        const SCORING = {
+            4: { label: 'Selalu', weight: 4 },
+            3: { label: 'Sering', weight: 3 },
+            2: { label: 'Kadang-kadang', weight: 2 },
+            1: { label: 'Belum Terlihat', weight: 1 }
+        };
+
+        const CATEGORIES = [
+            { min: 3.51, max: 4.00, label: 'Sangat Baik', color: 'bg-brand-blue text-white', hex: '#2563EB' },
+            { min: 2.51, max: 3.50, label: 'Baik', color: 'bg-brand-green text-white', hex: '#16A34A' },
+            { min: 1.51, max: 2.50, label: 'Cukup', color: 'bg-brand-orange text-white', hex: '#F59E0B' },
+            { min: 1.00, max: 1.50, label: 'Perlu Pendampingan', color: 'bg-red-500 text-white', hex: '#EF4444' }
+        ];
+
+        const MENU_ITEMS = [
+            { id: 'dashboard', icon: 'layout-dashboard', label: 'Dashboard' },
+            { id: 'guru', icon: 'user-check', label: 'Data Guru' },
+            { id: 'siswa', icon: 'users', label: 'Data Siswa' },
+            { id: 'input', icon: 'edit-3', label: 'Input Harian' },
+            { id: 'rekap-minggu', icon: 'calendar', label: 'Rekap Mingguan' },
+            { id: 'rekap-bulan', icon: 'calendar-days', label: 'Rekap Bulanan' },
+            { id: 'grafik', icon: 'pie-chart', label: 'Grafik' },
+            { id: 'laporan', icon: 'printer', label: 'Laporan' },
+            { id: 'pengaturan', icon: 'settings', label: 'Pengaturan' }
+        ];
+
+        // --- STATE MANAGEMENT (LocalStorage) ---
+        const DB_KEY = 'jurnalGuruDB_v1';
+        let state = {
+            currentView: 'dashboard',
+            theme: 'light',
+            data: {
+                guru: { nama: '', nip: '', sekolah: '', kelas: '', semester: '1', tapel: '2026/2027', logo: '' },
+                siswa: [], // { id, nis, nama, jk, absen }
+                jurnal: [] // { id, tgl, siswaId, h1..h7, catatan }
+            }
+        };
+
+        let activeChart = null; // Store chart instance for destruction
+
+        function loadData() {
+            try {
+                const stored = localStorage.getItem(DB_KEY);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    state.data = { ...state.data, ...parsed.data };
+                    if(parsed.theme) state.theme = parsed.theme;
+                }
+            } catch (e) {
+                console.error("Error loading data", e);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(DB_KEY, JSON.stringify({ data: state.data, theme: state.theme }));
+            updateTopBarInfo();
+        }
+
+        // --- UTILITY FUNCTIONS ---
+        const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
+        
+        const getCategory = (score) => {
+            if(score === 0 || isNaN(score)) return { label: 'Belum Ada Data', color: 'bg-gray-200 text-gray-600', hex: '#cbd5e1' };
+            const num = parseFloat(score);
+            return CATEGORIES.find(c => num >= c.min && num <= c.max) || CATEGORIES[3];
+        };
+
+        const formatDate = (dateString) => {
+            if(!dateString) return '-';
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('id-ID', options);
+        };
+
+        const Toast = Swal.mixin({
+            toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        // --- STREAMING_CHUNK:Core Logic & Calculations... ---
+        
+        // Calculate average for a single journal entry
+        const calculateEntryAverage = (entry) => {
+            let sum = 0;
+            let count = 0;
+            HABITS.forEach(h => {
+                if(entry[h.id]) { sum += parseInt(entry[h.id]); count++; }
+            });
+            return count === 7 ? (sum / 7).toFixed(2) : 0;
+        };
+
+        // Get student data joined with latest journals for a date range
+        const getRekapData = (startDate, endDate) => {
+            const records = state.data.jurnal.filter(j => {
+                const d = new Date(j.tgl);
+                return d >= new Date(startDate) && d <= new Date(endDate);
+            });
+
+            const rekap = state.data.siswa.map(siswa => {
+                const sRecords = records.filter(r => r.siswaId === siswa.id);
+                let sums = { h1:0, h2:0, h3:0, h4:0, h5:0, h6:0, h7:0 };
+                let counts = { h1:0, h2:0, h3:0, h4:0, h5:0, h6:0, h7:0 };
+                
+                sRecords.forEach(r => {
+                    HABITS.forEach(h => {
+                        if(r[h.id]) { sums[h.id] += parseInt(r[h.id]); counts[h.id]++; }
+                    });
+                });
+
+                let avgs = {};
+                let totalScore = 0;
+                let validHabits = 0;
+
+                HABITS.forEach(h => {
+                    avgs[h.id] = counts[h.id] > 0 ? sums[h.id] / counts[h.id] : 0;
+                    if(avgs[h.id] > 0) { totalScore += avgs[h.id]; validHabits++; }
+                });
+
+                const finalAvg = validHabits === 7 ? (totalScore / 7) : 0;
+                
+                return {
+                    ...siswa,
+                    averages: avgs,
+                    finalScore: finalAvg.toFixed(2),
+                    category: getCategory(finalAvg),
+                    recordCount: sRecords.length
+                };
+            });
+
+            // Sort by final score descending
+            return rekap.sort((a, b) => b.finalScore - a.finalScore).map((s, index) => ({...s, rank: s.finalScore > 0 ? index + 1 : '-'}));
+        };
+
+        // --- UI UPDATERS ---
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second:'2-digit' });
+            const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('header-time').textContent = timeStr;
+            document.getElementById('header-date').textContent = dateStr;
+        }
+
+        function updateTopBarInfo() {
+            const g = state.data.guru;
+            if(g.nama) {
+                document.getElementById('teacher-name-display').textContent = g.nama;
+                document.getElementById('teacher-initial').textContent = g.nama.charAt(0).toUpperCase();
+            }
+            if(g.tapel) document.getElementById('header-tapel').textContent = `Tapel: ${g.tapel}`;
+        }
+
+        function applyTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (state.theme === 'dark') {
+                html.classList.add('dark');
+                icon.setAttribute('data-lucide', 'sun');
+            } else {
+                html.classList.remove('dark');
+                icon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+            // Re-render charts if they exist to match theme
+            if(activeChart && typeof renderGrafik === 'function' && state.currentView === 'grafik') renderGrafik();
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            saveData();
+            applyTheme();
+        }
+
+        function generateWatermark() {
+            const container = document.getElementById('watermark');
+            let content = '';
+            const text = "WA CHANNEL:\nInfo Guru Tenaga Kependidikan\n\nTHREADS:\ninfo_gtk\n\nINSTAGRAM:\ninfo_gtk\n\nTELEGRAM:\nINFO GTK";
+            for(let i=0; i<12; i++) {
+                content += `<div class="watermark-text">${text}</div>`;
+            }
+            container.innerHTML = content;
+        }
+
+        function renderMenu() {
+            const menuContainer = document.getElementById('nav-menu');
+            menuContainer.innerHTML = MENU_ITEMS.map(item => `
+                <button onclick="navigate('${item.id}')" 
+                    class="nav-item flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl transition-colors text-sm ${state.currentView === item.id ? 'active' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+                    id="menu-${item.id}">
+                    <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                    ${item.label}
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function navigate(viewId) {
+            state.currentView = viewId;
+            renderMenu();
+            
+            const titleItem = MENU_ITEMS.find(i => i.id === viewId);
+            document.getElementById('page-title').textContent = titleItem ? titleItem.label : 'Jurnal Guru';
+            
+            const content = document.getElementById('main-content');
+            content.innerHTML = '<div class="flex justify-center items-center h-64"><div class="loader"></div></div>';
+            
+            // Close mobile menu if open
+            const sidebar = document.getElementById('sidebar');
+            if(window.innerWidth < 768 && !sidebar.classList.contains('hidden')) {
+                sidebar.classList.add('hidden');
+            }
+
+            setTimeout(() => {
+                switch(viewId) {
+                    case 'dashboard': renderDashboard(); break;
+                    case 'guru': renderDataGuru(); break;
+                    case 'siswa': renderDataSiswa(); break;
+                    case 'input': renderInputHarian(); break;
+                    case 'rekap-minggu': renderRekap('mingguan'); break;
+                    case 'rekap-bulan': renderRekap('bulanan'); break;
+                    case 'grafik': renderGrafik(); break;
+                    case 'laporan': renderLaporan(); break;
+                    case 'pengaturan': renderPengaturan(); break;
+                    default: renderDashboard();
+                }
+                lucide.createIcons();
+            }, 100); // slight delay for smooth transition feel
+        }
+
+        // --- STREAMING_CHUNK:Rendering Dashboard... ---
+        function renderDashboard() {
+            const content = document.getElementById('main-content');
+            const totalSiswa = state.data.siswa.length;
+            
+            // Calculate Class Average (Last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const rekapData = getRekapData(thirtyDaysAgo.toISOString().split('T')[0], new Date().toISOString().split('T')[0]);
+            
+            let sumScores = 0;
+            let validStudents = 0;
+            let bestStudent = { name: '-', score: 0 };
+            
+            // Calculate Habit Averages
+            let habitSums = { h1:0, h2:0, h3:0, h4:0, h5:0, h6:0, h7:0 };
+            
+            rekapData.forEach(s => {
+                if(s.finalScore > 0) {
+                    sumScores += parseFloat(s.finalScore);
+                    validStudents++;
+                    if(parseFloat(s.finalScore) > bestStudent.score) {
+                        bestStudent = { name: s.nama, score: parseFloat(s.finalScore) };
+                    }
+                    HABITS.forEach(h => { habitSums[h.id] += s.averages[h.id]; });
+                }
+            });
+
+            const classAvg = validStudents > 0 ? (sumScores / validStudents).toFixed(2) : 0;
+            const classCat = getCategory(classAvg);
+
+            // Best/Worst Habit
+            let bestHabit = { name: '-', score: 0 };
+            let worstHabit = { name: '-', score: 5 };
+            
+            if(validStudents > 0) {
+                HABITS.forEach(h => {
+                    const avg = habitSums[h.id] / validStudents;
+                    if(avg > bestHabit.score) bestHabit = { name: h.name, score: avg };
+                    if(avg < worstHabit.score && avg > 0) worstHabit = { name: h.name, score: avg };
+                });
+                if(worstHabit.score === 5) worstHabit = { name: '-', score: 0 };
+            }
+
+            let html = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 fade-in">
+                    
+                    <!-- Stat Card 1 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft hover-card border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Total Siswa</p>
+                                <h3 class="text-3xl font-bold text-gray-800 dark:text-white">${totalSiswa}</h3>
+                            </div>
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900/30 text-brand-blue rounded-lg">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 2 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft hover-card border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Rata-rata Kelas</p>
+                                <h3 class="text-3xl font-bold text-gray-800 dark:text-white">${classAvg}</h3>
+                            </div>
+                            <div class="p-3 bg-green-100 dark:bg-green-900/30 text-brand-green rounded-lg">
+                                <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center gap-2">
+                            <span class="text-xs px-2 py-1 rounded-full ${classCat.color}">${classCat.label}</span>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 3 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft hover-card border border-gray-100 dark:border-gray-700">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Siswa Terbaik</p>
+                                <h3 class="text-lg font-bold text-gray-800 dark:text-white truncate max-w-[150px]">${bestStudent.name}</h3>
+                                <p class="text-sm text-brand-orange font-semibold mt-1">Skor: ${bestStudent.score}</p>
+                            </div>
+                            <div class="p-3 bg-orange-100 dark:bg-orange-900/30 text-brand-orange rounded-lg">
+                                <i data-lucide="award" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 4 -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft hover-card border border-gray-100 dark:border-gray-700">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Kebiasaan Terbaik</span>
+                                <span class="text-sm font-semibold text-brand-green truncate max-w-[100px]">${bestHabit.name}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Kebiasaan Terendah</span>
+                                <span class="text-sm font-semibold text-red-500 truncate max-w-[100px]">${worstHabit.name}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in">
+                    <!-- Progress Kelas -->
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Progress 7 Kebiasaan Kelas</h3>
+                        <div class="space-y-4">
+            `;
+            
+            HABITS.forEach(h => {
+                const avg = validStudents > 0 ? (habitSums[h.id] / validStudents).toFixed(2) : 0;
+                const percentage = (avg / 4) * 100;
+                let colorClass = 'bg-brand-blue';
+                if(avg >= 3.51) colorClass = 'bg-brand-blue';
+                else if(avg >= 2.51) colorClass = 'bg-brand-green';
+                else if(avg >= 1.51) colorClass = 'bg-brand-orange';
+                else if(avg > 0) colorClass = 'bg-red-500';
+                else colorClass = 'bg-gray-300 dark:bg-gray-600';
+
+                html += `
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-medium text-gray-700 dark:text-gray-300">${h.icon} ${h.name}</span>
+                            <span class="font-bold text-gray-800 dark:text-white">${avg} / 4.00</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                            <div class="${colorClass} h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Info -->
+                    <div class="bg-brand-blue rounded-xl p-6 shadow-soft text-white flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 opacity-10">
+                            <i data-lucide="star" class="w-48 h-48"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">Selamat Datang!</h3>
+                            <p class="text-blue-100 text-sm mb-4">Pantau terus perkembangan 7 Kebiasaan Anak Indonesia Hebat secara rutin untuk hasil yang maksimal.</p>
+                            
+                            <div class="mt-6 bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                <p class="text-xs font-semibold mb-2">Keterangan Kategori:</p>
+                                <ul class="text-xs space-y-1">
+                                    <li><span class="inline-block w-3 h-3 bg-brand-blue rounded-full mr-2"></span>Sangat Baik (3.51 - 4.00)</li>
+                                    <li><span class="inline-block w-3 h-3 bg-brand-green rounded-full mr-2"></span>Baik (2.51 - 3.50)</li>
+                                    <li><span class="inline-block w-3 h-3 bg-brand-orange rounded-full mr-2"></span>Cukup (1.51 - 2.50)</li>
+                                    <li><span class="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>Perlu Pendampingan (< 1.50)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button onclick="navigate('input')" class="mt-6 w-full bg-white text-brand-blue font-semibold py-2 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                            Input Jurnal Hari Ini
+                        </button>
+                    </div>
+                </div>
+            `;
+            content.innerHTML = html;
+        }
+
+        // --- STREAMING_CHUNK:Rendering Data Guru... ---
+        function renderDataGuru() {
+            const content = document.getElementById('main-content');
+            const g = state.data.guru;
+            
+            content.innerHTML = `
+                <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl p-8 shadow-soft border border-gray-100 dark:border-gray-700 fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">Profil Guru & Kelas</h3>
+                    
+                    <form id="form-guru" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap Guru</label>
+                                <input type="text" id="g-nama" value="${g.nama}" required class="form-input" placeholder="Contoh: Budi Santoso, S.Pd.">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">NIP</label>
+                                <input type="text" id="g-nip" value="${g.nip}" class="form-input" placeholder="NIP (opsional)">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Sekolah</label>
+                            <input type="text" id="g-sekolah" value="${g.sekolah}" required class="form-input" placeholder="SD Negeri 1 Nusantara">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kelas</label>
+                                <input type="text" id="g-kelas" value="${g.kelas}" required class="form-input" placeholder="Contoh: VI A">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Semester</label>
+                                <select id="g-semester" class="form-input">
+                                    <option value="1" ${g.semester === '1' ? 'selected' : ''}>1 (Ganjil)</option>
+                                    <option value="2" ${g.semester === '2' ? 'selected' : ''}>2 (Genap)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tahun Pelajaran</label>
+                                <input type="text" id="g-tapel" value="${g.tapel}" required class="form-input" placeholder="2026/2027">
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" onclick="saveDataGuru()" class="bg-brand-blue hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors flex items-center gap-2">
+                                <i data-lucide="save" class="w-5 h-5"></i> Simpan Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function saveDataGuru() {
+            const nama = document.getElementById('g-nama').value.trim();
+            if(!nama) return Swal.fire('Error', 'Nama Guru tidak boleh kosong', 'error');
+
+            state.data.guru = {
+                nama: nama,
+                nip: document.getElementById('g-nip').value,
+                sekolah: document.getElementById('g-sekolah').value,
+                kelas: document.getElementById('g-kelas').value,
+                semester: document.getElementById('g-semester').value,
+                tapel: document.getElementById('g-tapel').value,
+                logo: state.data.guru.logo // keep existing logo if any
+            };
+            saveData();
+            Toast.fire({ icon: 'success', title: 'Data Guru berhasil disimpan' });
+        }
+
+        // --- STREAMING_CHUNK:Rendering Data Siswa (CRUD)... ---
+        function renderDataSiswa() {
+            const content = document.getElementById('main-content');
+            const siswaList = state.data.siswa.sort((a,b) => parseInt(a.absen) - parseInt(b.absen));
+            
+            let html = `
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 fade-in flex flex-col h-full">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">Daftar Siswa Kelas ${state.data.guru.kelas || '-'}</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="openModalSiswa()" class="bg-brand-blue hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Tambah Siswa
+                            </button>
+                            <label class="bg-brand-green hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2 cursor-pointer">
+                                <i data-lucide="upload" class="w-4 h-4"></i> Import Excel
+                                <input type="file" id="import-excel" accept=".xlsx, .xls" class="hidden" onchange="importSiswa(event)">
+                            </label>
+                            <button onclick="exportSiswa()" class="bg-brand-orange hover:bg-orange-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                                <i data-lucide="download" class="w-4 h-4"></i> Export Template
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="relative max-w-sm">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                            <input type="text" id="search-siswa" placeholder="Cari nama atau NIS..." onkeyup="filterTableSiswa()" class="form-input pl-10 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="table-container flex-1 border border-gray-200 dark:border-gray-700">
+                        <table id="table-siswa">
+                            <thead class="sticky top-0 z-10">
+                                <tr>
+                                    <th class="w-16 text-center">No. Absen</th>
+                                    <th>NIS</th>
+                                    <th>Nama Siswa</th>
+                                    <th>L/P</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${siswaList.length === 0 ? `<tr><td colspan="5" class="text-center py-8 text-gray-500">Belum ada data siswa. Silakan tambah atau import.</td></tr>` : ''}
+                                ${siswaList.map(s => `
+                                    <tr>
+                                        <td class="text-center font-medium">${s.absen}</td>
+                                        <td>${s.nis}</td>
+                                        <td class="font-medium text-gray-900 dark:text-gray-100">${s.nama}</td>
+                                        <td>${s.jk}</td>
+                                        <td class="text-center">
+                                            <div class="flex justify-center gap-2">
+                                                <button onclick="openModalSiswa('${s.id}')" class="p-1.5 bg-blue-100 text-brand-blue rounded hover:bg-blue-200 transition-colors" title="Edit">
+                                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                                </button>
+                                                <button onclick="deleteSiswa('${s.id}')" class="p-1.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors" title="Hapus">
+                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Form Siswa -->
+                <div id="modal-siswa" class="modal-overlay">
+                    <div class="modal-content p-6 fade-in">
+                        <div class="flex justify-between items-center mb-5">
+                            <h3 id="modal-siswa-title" class="text-lg font-bold">Tambah Siswa</h3>
+                            <button onclick="closeModalSiswa()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <form id="form-siswa" class="space-y-4">
+                            <input type="hidden" id="s-id">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">No. Absen</label>
+                                    <input type="number" id="s-absen" required class="form-input text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">NIS</label>
+                                    <input type="text" id="s-nis" required class="form-input text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
+                                <input type="text" id="s-nama" required class="form-input text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Jenis Kelamin</label>
+                                <select id="s-jk" required class="form-input text-sm">
+                                    <option value="L">Laki-laki (L)</option>
+                                    <option value="P">Perempuan (P)</option>
+                                </select>
+                            </div>
+                            <div class="pt-4 flex justify-end gap-2 border-t dark:border-gray-700">
+                                <button type="button" onclick="closeModalSiswa()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg text-sm font-medium">Batal</button>
+                                <button type="button" onclick="saveSiswa()" class="px-4 py-2 bg-brand-blue text-white rounded-lg text-sm font-medium">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            content.innerHTML = html;
+        }
+
+        // Siswa Logic
+        function openModalSiswa(id = null) {
+            document.getElementById('modal-siswa').style.display = 'flex';
+            const form = document.getElementById('form-siswa');
+            form.reset();
+            document.getElementById('s-id').value = '';
+            document.getElementById('modal-siswa-title').textContent = 'Tambah Siswa';
+            
+            if(!id) {
+                // Auto increment absen
+                const maxAbsen = state.data.siswa.reduce((max, s) => Math.max(max, parseInt(s.absen) || 0), 0);
+                document.getElementById('s-absen').value = maxAbsen + 1;
+            } else {
+                const s = state.data.siswa.find(x => x.id === id);
+                if(s) {
+                    document.getElementById('modal-siswa-title').textContent = 'Edit Siswa';
+                    document.getElementById('s-id').value = s.id;
+                    document.getElementById('s-absen').value = s.absen;
+                    document.getElementById('s-nis').value = s.nis;
+                    document.getElementById('s-nama').value = s.nama;
+                    document.getElementById('s-jk').value = s.jk;
+                }
+            }
+        }
+
+        function closeModalSiswa() {
+            document.getElementById('modal-siswa').style.display = 'none';
+        }
+
+        function saveSiswa() {
+            const id = document.getElementById('s-id').value;
+            const absen = document.getElementById('s-absen').value;
+            const nis = document.getElementById('s-nis').value;
+            const nama = document.getElementById('s-nama').value;
+            const jk = document.getElementById('s-jk').value;
+
+            if(!absen || !nis || !nama) return Swal.fire('Error', 'Harap isi semua kolom wajib', 'error');
+
+            if(id) {
+                // Edit
+                const index = state.data.siswa.findIndex(x => x.id === id);
+                state.data.siswa[index] = { id, absen, nis, nama, jk };
+            } else {
+                // Add
+                state.data.siswa.push({ id: generateId(), absen, nis, nama, jk });
+            }
+
+            saveData();
+            closeModalSiswa();
+            renderDataSiswa(); // re-render
+            Toast.fire({ icon: 'success', title: 'Data siswa tersimpan' });
+        }
+
+        function deleteSiswa(id) {
+            Swal.fire({
+                title: 'Hapus Siswa?',
+                text: "Data jurnal siswa ini juga akan terhapus!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    state.data.siswa = state.data.siswa.filter(s => s.id !== id);
+                    state.data.jurnal = state.data.jurnal.filter(j => j.siswaId !== id);
+                    saveData();
+                    renderDataSiswa();
+                    Toast.fire({ icon: 'success', title: 'Terhapus' });
+                }
+            })
+        }
+
+        function filterTableSiswa() {
+            const input = document.getElementById("search-siswa");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("table-siswa");
+            const tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip header
+                let tdName = tr[i].getElementsByTagName("td")[2];
+                let tdNis = tr[i].getElementsByTagName("td")[1];
+                if (tdName || tdNis) {
+                    let txtValueName = tdName.textContent || tdName.innerText;
+                    let txtValueNis = tdNis.textContent || tdNis.innerText;
+                    if (txtValueName.toUpperCase().indexOf(filter) > -1 || txtValueNis.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        }
+
+        // SheetJS Import/Export
+        function exportSiswa() {
+            const ws_data = [
+                ["No. Absen", "NIS", "Nama Lengkap", "L/P (Laki-laki/Perempuan)"]
+            ];
+            // Add existing data if any, else empty template
+            const sortedSiswa = [...state.data.siswa].sort((a,b) => parseInt(a.absen) - parseInt(b.absen));
+            if(sortedSiswa.length > 0){
+                sortedSiswa.forEach(s => ws_data.push([s.absen, s.nis, s.nama, s.jk]));
+            } else {
+                 ws_data.push(["1", "12345", "Contoh Nama", "L"]);
+            }
+
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data Siswa");
+            XLSX.writeFile(wb, "Template_Data_Siswa.xlsx");
+        }
+
+        function importSiswa(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const excelData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+
+                let addedCount = 0;
+                // Skip header row (index 0)
+                for(let i=1; i<excelData.length; i++) {
+                    const row = excelData[i];
+                    if(row.length >= 3 && row[1] && row[2]) { // Ensure NIS and Name exist
+                        const absen = row[0] || '';
+                        const nis = row[1].toString();
+                        const nama = row[2];
+                        let jk = (row[3] || 'L').toString().toUpperCase();
+                        if(jk !== 'L' && jk !== 'P') jk = 'L'; // fallback
+                        
+                        // Prevent duplicate NIS
+                        if(!state.data.siswa.find(s => s.nis === nis)) {
+                            state.data.siswa.push({ id: generateId(), absen, nis, nama, jk });
+                            addedCount++;
+                        }
+                    }
+                }
+
+                if(addedCount > 0) {
+                    saveData();
+                    renderDataSiswa();
+                    Swal.fire('Berhasil', `${addedCount} siswa berhasil diimport.`, 'success');
+                } else {
+                    Swal.fire('Info', 'Tidak ada data valid untuk diimport atau NIS sudah ada.', 'info');
+                }
+                event.target.value = ''; // reset input
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // --- STREAMING_CHUNK:Rendering Input Harian... ---
+        function renderInputHarian() {
+            const content = document.getElementById('main-content');
+            const today = new Date().toISOString().split('T')[0];
+            
+            let html = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in h-full">
+                    
+                    <!-- Form Control -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 flex flex-col">
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">Kontrol Input</h3>
+                        
+                        <div class="space-y-4 flex-1">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Tanggal</label>
+                                <input type="date" id="input-date" value="${today}" class="form-input text-sm" onchange="checkExistingJournal()">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Pilih Siswa</label>
+                                <select id="input-siswa" class="form-input text-sm" onchange="checkExistingJournal()">
+                                    <option value="">-- Pilih Siswa --</option>
+                                    ${state.data.siswa.sort((a,b)=>parseInt(a.absen)-parseInt(b.absen)).map(s => `<option value="${s.id}">${s.absen} - ${s.nama}</option>`).join('')}
+                                </select>
+                            </div>
+                            
+                            <!-- Mini Status Alert -->
+                            <div id="journal-status" class="hidden p-3 rounded-lg text-sm bg-blue-50 dark:bg-blue-900/30 text-brand-blue border border-blue-200 dark:border-blue-800">
+                                <i data-lucide="info" class="w-4 h-4 inline mr-1"></i> Data untuk tanggal ini sudah ada. Anda akan mengedit data yang sudah ada.
+                            </div>
+                        </div>
+
+                        <div class="pt-4 mt-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-2">
+                            <button onclick="resetFormInput()" class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">Reset</button>
+                            <button onclick="saveJournal()" class="bg-brand-blue text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                <i data-lucide="save" class="w-4 h-4"></i> Simpan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 7 Habits Form -->
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 overflow-y-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white">Penilaian 7 Kebiasaan</h3>
+                            <div id="live-average" class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-bold">Rata-rata: 0.00</div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="habits-form-container">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <label class="block text-sm font-medium mb-1">Catatan Guru (Opsional)</label>
+                            <textarea id="input-catatan" rows="3" class="form-input text-sm" placeholder="Tambahkan catatan khusus untuk siswa ini..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            content.innerHTML = html;
+            
+            // Build habits form
+            const formContainer = document.getElementById('habits-form-container');
+            formContainer.innerHTML = HABITS.map((h, i) => `
+                <div class="${i === 6 ? 'md:col-span-2' : ''} bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <label class="block text-sm font-semibold mb-2 flex items-center gap-2 text-gray-800 dark:text-gray-200">
+                        <span class="text-xl">${h.icon}</span> ${h.name}
+                    </label>
+                    <select id="sel-${h.id}" class="form-input text-sm habit-select" onchange="calculateLiveAverage()">
+                        <option value="">-- Pilih Nilai --</option>
+                        ${Object.keys(SCORING).sort((a,b)=>b-a).map(key => `<option value="${key}">${key} - ${SCORING[key].label}</option>`).join('')}
+                    </select>
+                </div>
+            `).join('');
+
+            checkExistingJournal(); // check if data exists on load (though empty selection initially)
+        }
+
+        function calculateLiveAverage() {
+            let sum = 0, count = 0;
+            HABITS.forEach(h => {
+                const val = document.getElementById(`sel-${h.id}`).value;
+                if(val) { sum += parseInt(val); count++; }
+            });
+            const avg = count === 7 ? (sum/7).toFixed(2) : '0.00';
+            const display = document.getElementById('live-average');
+            display.textContent = `Rata-rata: ${avg}`;
+            
+            // color coding live average
+            display.className = 'px-3 py-1 rounded-full text-sm font-bold transition-colors';
+            if(count === 7) {
+                const cat = getCategory(avg);
+                display.classList.add(cat.color.split(' ')[0], 'text-white'); // Apply background color
+            } else {
+                display.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-800', 'dark:text-gray-200');
+            }
+        }
+
+        function checkExistingJournal() {
+            const date = document.getElementById('input-date').value;
+            const siswaId = document.getElementById('input-siswa').value;
+            const statusDiv = document.getElementById('journal-status');
+            
+            resetFormInput(false); // clear selections, but don't clear student/date
+
+            if(!date || !siswaId) { statusDiv.classList.add('hidden'); return; }
+
+            const existing = state.data.jurnal.find(j => j.tgl === date && j.siswaId === siswaId);
+            
+            if(existing) {
+                statusDiv.classList.remove('hidden');
+                HABITS.forEach(h => {
+                    if(existing[h.id]) document.getElementById(`sel-${h.id}`).value = existing[h.id];
+                });
+                if(existing.catatan) document.getElementById('input-catatan').value = existing.catatan;
+                calculateLiveAverage();
+            } else {
+                statusDiv.classList.add('hidden');
+            }
+        }
+
+        function resetFormInput(full = true) {
+            HABITS.forEach(h => document.getElementById(`sel-${h.id}`).value = '');
+            document.getElementById('input-catatan').value = '';
+            document.getElementById('journal-status').classList.add('hidden');
+            calculateLiveAverage();
+            if(full) {
+                document.getElementById('input-siswa').value = '';
+                document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
+            }
+        }
+
+        function saveJournal() {
+            const date = document.getElementById('input-date').value;
+            const siswaId = document.getElementById('input-siswa').value;
+            
+            if(!date || !siswaId) return Swal.fire('Peringatan', 'Silakan pilih tanggal dan siswa', 'warning');
+
+            // Validate all habits selected
+            let allFilled = true;
+            let recordData = { tgl: date, siswaId: siswaId, catatan: document.getElementById('input-catatan').value };
+            
+            HABITS.forEach(h => {
+                const val = document.getElementById(`sel-${h.id}`).value;
+                if(!val) allFilled = false;
+                recordData[h.id] = val;
+            });
+
+            if(!allFilled) return Swal.fire('Peringatan', 'Harap isi nilai untuk semua 7 kebiasaan', 'warning');
+
+            // Check if exist
+            const existingIndex = state.data.jurnal.findIndex(j => j.tgl === date && j.siswaId === siswaId);
+            
+            if(existingIndex >= 0) {
+                // Update
+                state.data.jurnal[existingIndex] = { ...state.data.jurnal[existingIndex], ...recordData };
+            } else {
+                // Insert
+                recordData.id = generateId();
+                state.data.jurnal.push(recordData);
+            }
+
+            saveData();
+            Toast.fire({ icon: 'success', title: 'Jurnal Harian berhasil disimpan' });
+            
+            // Auto select next student
+            const select = document.getElementById('input-siswa');
+            if(select.selectedIndex < select.options.length - 1) {
+                select.selectedIndex++;
+                checkExistingJournal(); // Load next student's data if exists
+            } else {
+                resetFormInput();
+            }
+        }
+
+        // --- STREAMING_CHUNK:Rendering Rekap (Mingguan/Bulanan)... ---
+        function renderRekap(type) {
+            const content = document.getElementById('main-content');
+            const today = new Date();
+            let defStart, defEnd;
+
+            if(type === 'mingguan') {
+                // Default to current week (Monday to Sunday)
+                const day = today.getDay() || 7; 
+                defStart = new Date(today); defStart.setDate(today.getDate() - day + 1);
+                defEnd = new Date(today); defEnd.setDate(today.getDate() - day + 7);
+            } else {
+                // Default to current month
+                defStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                defEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            }
+
+            // Format for input type="date"
+            const startStr = defStart.toISOString().split('T')[0];
+            const endStr = defEnd.toISOString().split('T')[0];
+
+            let html = `
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 fade-in flex flex-col h-full">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white capitalize">Rekap ${type}</h3>
+                        
+                        <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
+                            <input type="date" id="filter-start" value="${startStr}" class="bg-transparent text-sm font-medium border-none outline-none dark:text-white" onchange="loadTableRekap()">
+                            <span class="text-gray-400">s/d</span>
+                            <input type="date" id="filter-end" value="${endStr}" class="bg-transparent text-sm font-medium border-none outline-none dark:text-white" onchange="loadTableRekap()">
+                            <button onclick="loadTableRekap()" class="p-1.5 bg-brand-blue text-white rounded hover:bg-blue-700">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Summary Cards -->
+                    <div id="rekap-summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <!-- Injected by JS -->
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-container flex-1 border border-gray-200 dark:border-gray-700 relative">
+                        <table id="table-rekap" class="min-w-max">
+                            <thead class="sticky top-0 z-10 shadow-sm">
+                                <tr>
+                                    <th class="w-12 text-center">Rank</th>
+                                    <th>Nama Siswa</th>
+                                    ${HABITS.map(h => `<th class="text-center" title="${h.name}">${h.icon}</th>`).join('')}
+                                    <th class="text-center bg-blue-50 dark:bg-blue-900/20">Rata-rata</th>
+                                    <th class="text-center">Kategori</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-rekap">
+                                <!-- Injected by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            content.innerHTML = html;
+            lucide.createIcons();
+            loadTableRekap(); // Initial load
+        }
+
+        function loadTableRekap() {
+            const startDate = document.getElementById('filter-start').value;
+            const endDate = document.getElementById('filter-end').value;
+            
+            if(!startDate || !endDate) return;
+
+            const rekapData = getRekapData(startDate, endDate);
+            const tbody = document.getElementById('tbody-rekap');
+            const summaryDiv = document.getElementById('rekap-summary');
+
+            // Render Table
+            if(rekapData.length === 0 || rekapData.every(s => s.finalScore == 0)) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-gray-500">Tidak ada data jurnal pada rentang tanggal ini.</td></tr>`;
+                summaryDiv.innerHTML = '';
+                return;
+            }
+
+            let catCounts = { 'Sangat Baik': 0, 'Baik': 0, 'Cukup': 0, 'Perlu Pendampingan': 0 };
+
+            tbody.innerHTML = rekapData.map(s => {
+                if(s.finalScore > 0) catCounts[s.category.label]++;
+                
+                return `
+                <tr>
+                    <td class="text-center font-bold ${s.rank === 1 ? 'text-brand-orange' : ''}">
+                        ${s.rank === 1 ? '<i data-lucide="crown" class="w-4 h-4 mx-auto inline"></i>' : s.rank}
+                    </td>
+                    <td class="font-medium">
+                        ${s.nama}
+                        <div class="text-[10px] text-gray-400 font-normal">Input: ${s.recordCount} hari</div>
+                    </td>
+                    ${HABITS.map(h => `
+                        <td class="text-center">
+                            <span class="${s.averages[h.id] > 0 ? '' : 'text-gray-300 dark:text-gray-600'}">
+                                ${s.averages[h.id] > 0 ? s.averages[h.id].toFixed(1) : '-'}
+                            </span>
+                        </td>
+                    `).join('')}
+                    <td class="text-center font-bold bg-blue-50/50 dark:bg-blue-900/10">
+                        ${s.finalScore > 0 ? s.finalScore : '-'}
+                    </td>
+                    <td class="text-center">
+                        ${s.finalScore > 0 ? `<span class="px-2 py-1 text-xs rounded-full ${s.category.color}">${s.category.label}</span>` : '-'}
+                    </td>
+                </tr>
+            `}).join('');
+            
+            lucide.createIcons();
+
+            // Render Summary
+            const totalWithData = rekapData.filter(s => s.finalScore > 0).length;
+            summaryDiv.innerHTML = CATEGORIES.map(c => `
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">${c.label}</p>
+                        <h4 class="text-xl font-bold" style="color: ${c.hex}">${catCounts[c.label] || 0} <span class="text-sm font-normal text-gray-400">Siswa</span></h4>
+                    </div>
+                    <div class="w-2 h-10 rounded-full" style="background-color: ${c.hex}"></div>
+                </div>
+            `).join('');
+        }
+
+        // --- STREAMING_CHUNK:Rendering Grafik... ---
+        function renderGrafik() {
+            const content = document.getElementById('main-content');
+            
+            let html = `
+                <div class="flex flex-col gap-6 fade-in pb-8">
+                    <!-- Controls -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-soft border border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <h3 class="font-bold">Analisis Grafik</h3>
+                        <select id="chart-month-filter" class="form-input w-48 py-1.5 text-sm" onchange="updateCharts()">
+                            <option value="all">Semua Waktu</option>
+                            <!-- populate last 6 months -->
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Radar Chart: Habit Averages -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700">
+                            <h4 class="text-sm font-semibold text-center mb-4">Rata-rata 7 Kebiasaan Kelas</h4>
+                            <div class="relative h-64 w-full">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Doughnut Chart: Category Distribution -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700">
+                            <h4 class="text-sm font-semibold text-center mb-4">Distribusi Kategori Siswa</h4>
+                            <div class="relative h-64 w-full flex justify-center">
+                                <canvas id="doughnutChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Line Chart: Monthly Trend -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700">
+                        <h4 class="text-sm font-semibold mb-4">Trend Rata-rata Kelas Bulanan</h4>
+                        <div class="relative h-72 w-full">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            content.innerHTML = html;
+
+            // Populate Month Filter
+            const select = document.getElementById('chart-month-filter');
+            const today = new Date();
+            for(let i=0; i<6; i++) {
+                const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                const val = d.toISOString().substring(0,7); // YYYY-MM
+                const label = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                select.options.add(new Option(label, val));
+            }
+
+            // Small delay to ensure canvas is painted before chart init
+            setTimeout(() => { updateCharts(); }, 100);
+        }
+
+        // Global chart instances to destroy them before re-rendering
+        let charts = { radar: null, doughnut: null, line: null };
+
+        function updateCharts() {
+            const filterMonth = document.getElementById('chart-month-filter').value;
+            let filteredRecords = state.data.jurnal;
+            
+            if(filterMonth !== 'all') {
+                filteredRecords = state.data.jurnal.filter(j => j.tgl.startsWith(filterMonth));
+            }
+
+            // Theme colors
+            const isDark = state.theme === 'dark';
+            const textColor = isDark ? '#e5e7eb' : '#374151';
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+
+            Chart.defaults.color = textColor;
+            Chart.defaults.font.family = 'Poppins';
+
+            // --- 1. Radar Chart Data ---
+            let habitSums = { h1:0, h2:0, h3:0, h4:0, h5:0, h6:0, h7:0 };
+            let totalRecords = filteredRecords.length;
+            
+            if(totalRecords > 0) {
+                filteredRecords.forEach(r => {
+                    HABITS.forEach(h => { if(r[h.id]) habitSums[h.id] += parseInt(r[h.id]); });
+                });
+            }
+            
+            const radarData = HABITS.map(h => totalRecords > 0 ? (habitSums[h.id] / totalRecords).toFixed(2) : 0);
+
+            if(charts.radar) charts.radar.destroy();
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            charts.radar = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: HABITS.map(h => h.name),
+                    datasets: [{
+                        label: 'Rata-rata Kelas',
+                        data: radarData,
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderColor: '#2563EB',
+                        pointBackgroundColor: '#2563EB',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#2563EB',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: gridColor },
+                            grid: { color: gridColor },
+                            pointLabels: { color: textColor, font: { size: 10 } },
+                            ticks: { min: 0, max: 4, stepSize: 1, backdropColor: 'transparent', color: textColor }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // --- 2. Doughnut Chart Data ---
+            // Calculate final score for each student based on filtered records
+            let catCounts = [0, 0, 0, 0]; // Sangat Baik, Baik, Cukup, Perlu Pendampingan
+            
+            if(totalRecords > 0) {
+                state.data.siswa.forEach(s => {
+                    const sRecords = filteredRecords.filter(r => r.siswaId === s.id);
+                    if(sRecords.length > 0) {
+                        let sSum = 0, sCount = 0;
+                        sRecords.forEach(r => {
+                            HABITS.forEach(h => { if(r[h.id]) { sSum += parseInt(r[h.id]); sCount++; } });
+                        });
+                        const sAvg = (sSum / sCount).toFixed(2);
+                        const cat = getCategory(sAvg);
+                        const catIndex = CATEGORIES.findIndex(c => c.label === cat.label);
+                        if(catIndex >= 0) catCounts[catIndex]++;
+                    }
+                });
+            }
+
+            if(charts.doughnut) charts.doughnut.destroy();
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            charts.doughnut = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: CATEGORIES.map(c => c.label),
+                    datasets: [{
+                        data: catCounts,
+                        backgroundColor: CATEGORIES.map(c => c.hex),
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: {size: 11} } }
+                    }
+                }
+            });
+
+            // --- 3. Line Chart Data (Monthly Trend) ---
+            // Group all journals by month
+            let monthlyData = {};
+            state.data.jurnal.forEach(r => {
+                const month = r.tgl.substring(0,7); // YYYY-MM
+                if(!monthlyData[month]) monthlyData[month] = { sum: 0, count: 0 };
+                let rSum = 0, rCount = 0;
+                HABITS.forEach(h => { if(r[h.id]) { rSum += parseInt(r[h.id]); rCount++; } });
+                if(rCount > 0) {
+                    monthlyData[month].sum += (rSum / rCount);
+                    monthlyData[month].count++;
+                }
+            });
+
+            // Sort months
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const labelsLine = sortedMonths.map(m => {
+                const d = new Date(m + '-01');
+                return d.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
+            });
+            const dataLine = sortedMonths.map(m => (monthlyData[m].sum / monthlyData[m].count).toFixed(2));
+
+            if(charts.line) charts.line.destroy();
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            charts.line = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: labelsLine.length > 0 ? labelsLine : ['Belum Ada Data'],
+                    datasets: [{
+                        label: 'Rata-rata Kelas',
+                        data: dataLine.length > 0 ? dataLine : [0],
+                        borderColor: '#16A34A',
+                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#16A34A',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.4 // smooth curve
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 4, grid: { color: gridColor } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+            activeChart = true; // flag to re-render on theme change
+        }
+
+        // --- STREAMING_CHUNK:Rendering Laporan & Ekspor... ---
+        function renderLaporan() {
+            const content = document.getElementById('main-content');
+            const today = new Date();
+            const currentMonth = today.toISOString().substring(0,7);
+
+            let html = `
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-soft border border-gray-100 dark:border-gray-700 fade-in flex flex-col h-full">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Cetak Laporan</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Jenis Laporan</label>
+                            <select id="lap-jenis" class="form-input text-sm" onchange="toggleLaporanFilter()">
+                                <option value="kelas">Rekap Kelas Bulanan</option>
+                                <option value="siswa">Detail Per Siswa</option>
+                            </select>
+                        </div>
+                        <div id="filter-bulan-container">
+                            <label class="block text-sm font-medium mb-1">Bulan</label>
+                            <input type="month" id="lap-bulan" value="${currentMonth}" class="form-input text-sm">
+                        </div>
+                        <div id="filter-siswa-container" class="hidden">
+                            <label class="block text-sm font-medium mb-1">Pilih Siswa</label>
+                            <select id="lap-siswa" class="form-input text-sm">
+                                ${state.data.siswa.sort((a,b)=>parseInt(a.absen)-parseInt(b.absen)).map(s => `<option value="${s.id}">${s.nama}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="flex items-end gap-2 md:col-span-3 lg:col-span-1">
+                            <button onclick="generateLaporanPreview()" class="w-full bg-brand-blue text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Tampilkan Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Print Actions -->
+                    <div id="print-actions" class="hidden flex justify-end gap-3 mb-4">
+                        <button onclick="exportLaporanExcel()" class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel
+                        </button>
+                        <button onclick="exportLaporanPDF()" class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="file-pdf" class="w-4 h-4"></i> PDF
+                        </button>
+                        <button onclick="printLaporan()" class="bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded-lg flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Cetak
+                        </button>
+                    </div>
+
+                    <!-- Preview Area -->
+                    <div class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                        <div id="laporan-preview" class="bg-white text-black p-8 shadow-sm min-h-full mx-auto" style="max-width: 210mm;">
+                            <!-- Content injected here -->
+                            <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+                                <i data-lucide="file-search" class="w-12 h-12 mb-2 opacity-50"></i>
+                                <p>Silakan sesuaikan filter dan klik Tampilkan Preview</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            content.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function toggleLaporanFilter() {
+            const jenis = document.getElementById('lap-jenis').value;
+            if(jenis === 'siswa') {
+                document.getElementById('filter-siswa-container').classList.remove('hidden');
+                document.getElementById('filter-bulan-container').classList.add('hidden'); // or show both if you want monthly detail
+            } else {
+                document.getElementById('filter-siswa-container').classList.add('hidden');
+                document.getElementById('filter-bulan-container').classList.remove('hidden');
+            }
+        }
+
+        function generateLaporanPreview() {
+            const jenis = document.getElementById('lap-jenis').value;
+            const container = document.getElementById('laporan-preview');
+            const g = state.data.guru;
+            
+            // Show print actions
+            document.getElementById('print-actions').classList.remove('hidden');
+
+            let html = `
+                <!-- Kop Surat -->
+                <div class="text-center border-b-2 border-black pb-4 mb-6">
+                    <h2 class="text-xl font-bold uppercase">PEMERINTAH KABUPATEN/KOTA</h2>
+                    <h2 class="text-xl font-bold uppercase">DINAS PENDIDIKAN</h2>
+                    <h1 class="text-2xl font-bold uppercase">${g.sekolah || 'NAMA SEKOLAH'}</h1>
+                    <p class="text-sm italic">Jurnal Pemantauan 7 Kebiasaan Anak Indonesia Hebat</p>
+                </div>
+            `;
+
+            if(jenis === 'kelas') {
+                const blnVal = document.getElementById('lap-bulan').value; // YYYY-MM
+                if(!blnVal) return;
+                
+                const d = new Date(blnVal + '-01');
+                const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+                
+                const blnStr = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                const rekapData = getRekapData(blnVal + '-01', lastDay.toISOString().split('T')[0]);
+
+                html += `
+                    <div class="mb-4 text-sm font-semibold flex justify-between">
+                        <div>
+                            <p>Kelas: ${g.kelas || '-'}</p>
+                            <p>Bulan: ${blnStr}</p>
+                        </div>
+                        <div class="text-right">
+                            <p>Semester: ${g.semester || '-'}</p>
+                            <p>Tahun Pelajaran: ${g.tapel || '-'}</p>
+                        </div>
+                    </div>
+                    <h3 class="text-center font-bold mb-4">REKAPITULASI KELAS</h3>
+                    <table class="w-full border-collapse border border-black text-xs mb-8">
+                        <thead>
+                            <tr>
+                                <th class="border border-black p-2 bg-gray-100 w-10">No</th>
+                                <th class="border border-black p-2 bg-gray-100">Nama Siswa</th>
+                                ${HABITS.map(h => `<th class="border border-black p-2 bg-gray-100 w-12" title="${h.name}">${h.icon}</th>`).join('')}
+                                <th class="border border-black p-2 bg-gray-100 w-16">Rata2</th>
+                                <th class="border border-black p-2 bg-gray-100 w-24">Kategori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rekapData.length === 0 ? '<tr><td colspan="11" class="border border-black p-4 text-center">Data kosong</td></tr>' : ''}
+                            ${rekapData.map((s, i) => `
+                                <tr>
+                                    <td class="border border-black p-1 text-center">${i+1}</td>
+                                    <td class="border border-black p-1">${s.nama}</td>
+                                    ${HABITS.map(h => `<td class="border border-black p-1 text-center">${s.averages[h.id] > 0 ? s.averages[h.id].toFixed(1) : '-'}</td>`).join('')}
+                                    <td class="border border-black p-1 text-center font-bold">${s.finalScore > 0 ? s.finalScore : '-'}</td>
+                                    <td class="border border-black p-1 text-center">${s.finalScore > 0 ? s.category.label : '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                const siswaId = document.getElementById('lap-siswa').value;
+                const siswa = state.data.siswa.find(s => s.id === siswaId);
+                if(!siswa) return;
+
+                // Get last 30 entries for this student
+                const records = state.data.jurnal
+                    .filter(j => j.siswaId === siswaId)
+                    .sort((a,b) => new Date(b.tgl) - new Date(a.tgl)) // descending
+                    .slice(0, 30); // limit to 30 for view
+
+                html += `
+                    <div class="mb-4 text-sm font-semibold flex justify-between">
+                        <div>
+                            <p>Nama Siswa: ${siswa.nama}</p>
+                            <p>NIS / No. Absen: ${siswa.nis} / ${siswa.absen}</p>
+                        </div>
+                        <div class="text-right">
+                            <p>Kelas: ${g.kelas || '-'}</p>
+                            <p>Tapel: ${g.tapel || '-'}</p>
+                        </div>
+                    </div>
+                    <h3 class="text-center font-bold mb-4">CATATAN JURNAL DETAIL</h3>
+                    <p class="text-xs mb-2 italic">Menampilkan 30 catatan terakhir.</p>
+                    <table class="w-full border-collapse border border-black text-xs mb-8">
+                        <thead>
+                            <tr>
+                                <th class="border border-black p-2 bg-gray-100 w-20">Tanggal</th>
+                                ${HABITS.map(h => `<th class="border border-black p-2 bg-gray-100 w-10" title="${h.name}">${h.icon}</th>`).join('')}
+                                <th class="border border-black p-2 bg-gray-100">Catatan Guru</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${records.length === 0 ? '<tr><td colspan="9" class="border border-black p-4 text-center">Belum ada catatan jurnal</td></tr>' : ''}
+                            ${records.map(r => `
+                                <tr>
+                                    <td class="border border-black p-1 text-center">${formatDate(r.tgl).split(', ')[1]}</td>
+                                    ${HABITS.map(h => `<td class="border border-black p-1 text-center">${r[h.id] || '-'}</td>`).join('')}
+                                    <td class="border border-black p-1">${r.catatan || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            // Tanda Tangan
+            const now = new Date();
+            const tglStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            html += `
+                <div class="flex justify-end mt-8 text-sm">
+                    <div class="text-center">
+                        <p>Diberikan di: ...................., ${tglStr}</p>
+                        <p class="mb-16">Guru Kelas</p>
+                        <p class="font-bold underline">${g.nama || 'Nama Guru'}</p>
+                        <p>NIP. ${g.nip || '-'}</p>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function printLaporan() {
+            window.print();
+        }
+
+        function exportLaporanPDF() {
+            const element = document.getElementById('laporan-preview');
+            const opt = {
+                margin:       10,
+                filename:     `Laporan_Jurnal_${new Date().getTime()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            // Sweetalert loading
+            Swal.fire({ title: 'Membuat PDF...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                Swal.close();
+                Toast.fire({ icon: 'success', title: 'PDF Berhasil diunduh' });
+            });
+        }
+
+        function exportLaporanExcel() {
+            const table = document.querySelector('#laporan-preview table');
+            if(!table) return;
+            
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Laporan"});
+            XLSX.writeFile(wb, `Laporan_Jurnal_${new Date().getTime()}.xlsx`);
+            Toast.fire({ icon: 'success', title: 'Excel Berhasil diunduh' });
+        }
+
+        // --- STREAMING_CHUNK:Rendering Pengaturan... ---
+        function renderPengaturan() {
+            const content = document.getElementById('main-content');
+            content.innerHTML = `
+                <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl p-8 shadow-soft border border-gray-100 dark:border-gray-700 fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">Pengaturan Aplikasi</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                            <h4 class="font-bold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i> Hapus Seluruh Data (Reset)
+                            </h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                                Tindakan ini akan menghapus seluruh data yang tersimpan di browser ini (Data Guru, Data Siswa, dan Semua Jurnal Harian). Data tidak dapat dikembalikan.
+                            </p>
+                            <button onclick="resetApp()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Reset Aplikasi
+                            </button>
+                        </div>
+
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg">
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-2 flex items-center gap-2">
+                                <i data-lucide="info" class="w-5 h-5"></i> Tentang Aplikasi
+                            </h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                                <strong>JURNAL GURU</strong> - Pemantauan 7 Kebiasaan Anak Indonesia Hebat.<br>
+                                Versi: 1.0.0
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                Aplikasi ini berjalan sepenuhnya di sisi klien (browser). Data Anda aman dan tersimpan secara lokal menggunakan LocalStorage. Tidak ada data yang dikirim ke server.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function resetApp() {
+            Swal.fire({
+                title: 'Reset Total Aplikasi?',
+                text: "ANDA YAKIN? Seluruh data akan terhapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus Semua!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem(DB_KEY);
+                    location.reload(); // Reload to reset state to defaults
+                }
+            })
+        }
+
+        // --- STREAMING_CHUNK:Initialization & Event Listeners... ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Remove loading screen after a short delay
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }, 800);
+
+            // Initialize app
+            loadData();
+            applyTheme();
+            updateTopBarInfo();
+            renderMenu();
+            generateWatermark();
+            
+            // Start clock
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Event Listeners
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('absolute');
+                sidebar.classList.toggle('h-full');
+            });
+
+            // Initial view
+            navigate('dashboard');
+        });
+    </script>
+</body>
+</html>
